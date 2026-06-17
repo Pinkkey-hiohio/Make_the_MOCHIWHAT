@@ -215,17 +215,14 @@ const stopAllBgm = () => {
   bgmElements.forEach((a) => { a.pause(); a.currentTime = 0; });
 };
 
-// 切换到指定 BGM（始终尝试播放，调用方负责确认用户已交互）
+// 切换到指定 BGM
 const switchBgm = (bgmId: string) => {
-  if (bgmId === activeBgmId && bgmPlaying) return;
+  if (bgmId === activeBgmId) return;
   stopAllBgm();
   activeBgmId = bgmId;
-  const bgm = bgmElements.get(bgmId);
-  if (bgm) {
-    bgm.play().then(() => {
-      bgmPlaying = true;
-      bgmToggle.textContent = '🔊';
-    }).catch(() => {});
+  if (bgmPlaying) {
+    const bgm = bgmElements.get(bgmId);
+    if (bgm) { bgm.play().catch(() => {}); }
   }
 };
 
@@ -246,12 +243,10 @@ bgmToggle.addEventListener('click', () => {
   bgmPlaying = !bgmPlaying;
 });
 
-// 首次交互触发当前 BGM（重试直到成功）
+// 首次交互触发菜单 BGM
 const tryPlayBgm = () => {
-  if (bgmPlaying) return;
-  const bgm = bgmElements.get(activeBgmId);
-  if (bgm) {
-    bgm.play().then(() => {
+  if (!bgmPlaying && menuBgm) {
+    menuBgm.play().then(() => {
       bgmPlaying = true;
       bgmToggle.textContent = '🔊';
     }).catch(() => {});
