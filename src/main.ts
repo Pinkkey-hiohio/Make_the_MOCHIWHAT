@@ -173,7 +173,7 @@ setGameCallbacks(
 
 // ===== 菜单 Logo =====
 const logoImg = document.getElementById('logo-img') as HTMLImageElement;
-logoImg.src = '/fruits/mano.png';
+logoImg.src = './fruits/mano.png';
 
 Loader.shared.add(images).load(() => {
   init();
@@ -196,7 +196,7 @@ const bgmVolume = document.getElementById('bgm-volume') as HTMLInputElement;
 // 创建所有 BGM
 const initBgmElements = () => {
   // 菜单 BGM
-  menuBgm = new Audio('/music/稲垣敬也 - TOWN (SCmix).mp3');
+  menuBgm = new Audio('./music/稲垣敬也 - TOWN (SCmix).mp3');
   menuBgm.loop = true;
   menuBgm.volume = parseFloat(bgmVolume.value) / 100;
   bgmElements.set('__menu__', menuBgm);
@@ -215,14 +215,17 @@ const stopAllBgm = () => {
   bgmElements.forEach((a) => { a.pause(); a.currentTime = 0; });
 };
 
-// 切换到指定 BGM
+// 切换到指定 BGM（始终尝试播放，调用方负责确认用户已交互）
 const switchBgm = (bgmId: string) => {
-  if (bgmId === activeBgmId) return;
+  if (bgmId === activeBgmId && bgmPlaying) return;
   stopAllBgm();
   activeBgmId = bgmId;
-  if (bgmPlaying) {
-    const bgm = bgmElements.get(bgmId);
-    if (bgm) { bgm.play().catch(() => {}); }
+  const bgm = bgmElements.get(bgmId);
+  if (bgm) {
+    bgm.play().then(() => {
+      bgmPlaying = true;
+      bgmToggle.textContent = '🔊';
+    }).catch(() => {});
   }
 };
 
@@ -243,14 +246,16 @@ bgmToggle.addEventListener('click', () => {
   bgmPlaying = !bgmPlaying;
 });
 
-// 首次交互触发菜单 BGM
+// 首次交互触发当前 BGM（重试直到成功）
 const tryPlayBgm = () => {
-  if (!bgmPlaying && menuBgm) {
-    menuBgm.play().then(() => {
+  if (bgmPlaying) return;
+  const bgm = bgmElements.get(activeBgmId);
+  if (bgm) {
+    bgm.play().then(() => {
       bgmPlaying = true;
       bgmToggle.textContent = '🔊';
     }).catch(() => {});
   }
 };
-document.addEventListener('click', tryPlayBgm, { once: true });
+document.addEventListener('click', tryPlayBgm);
 
