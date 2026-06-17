@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/Logo_mano.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>合成大MOCHI</title>
+    <script src="/box2d.min.js"></script>
+    <script src="/pixi-6.4.2.min.js"></script>
+  </head>
+  <body>
+    <!-- 开始菜单 -->
+    <div id="menu-overlay" class="hidden">
+      <div class="menu-bg"></div>
+      <!-- 主菜单 -->
+      <div class="menu-panel" id="main-menu-panel">
+        <div class="menu-logo">
+          <img class="logo-icon" id="logo-img" alt="logo" />
+          <img class="menu-title-img" src="/LOGO.png" alt="合成大MOCHI" />
+        </div>
+        <p class="menu-subtitle">选择模式开始游戏</p>
+        <div class="mode-select">
+          <button class="mode-btn active" data-mode="normal">
+            <img class="mode-icon-img" src="/normal.png" alt="普通模式" />
+            <span class="mode-label">普通模式</span>
+            <span class="mode-desc">堆满即结束</span>
+          </button>
+          <button class="mode-btn" data-mode="infinite">
+            <img class="mode-icon-img" src="/8th_live.png" alt="无限模式" />
+            <span class="mode-label">无限模式</span>
+            <span class="mode-desc">永不失败</span>
+          </button>
+        </div>
+        <button id="start-btn" class="start-btn">开始游戏</button>
+        <p class="copyright-note">图片与音乐素材版权归 Bandai Namco 所有</p>
+      </div>
+      <!-- 预设选择面板（普通模式二级菜单） -->
+      <div class="menu-panel hidden" id="preset-panel">
+        <p class="preset-title">选择分组</p>
+        <div class="preset-list" id="preset-list">
+          <!-- JS 动态生成 -->
+        </div>
+        <div class="preset-actions">
+          <button id="back-main-btn" class="action-btn secondary">返回</button>
+          <button id="preset-start-btn" class="action-btn primary">开始游戏</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 得分显示 -->
+    <div id="score-display" class="hidden">得分: 0</div>
+
+    <!-- 游戏结束 -->
+    <div id="game-over-overlay" class="hidden">
+      <div class="game-over-panel">
+        <h2>游戏结束</h2>
+        <div id="final-score">最终得分: 0</div>
+        <button id="restart-btn" class="action-btn primary">再来一局</button>
+        <button id="back-menu-btn" class="action-btn secondary">返回菜单</button>
+      </div>
+    </div>
+
+    <div id="root"></div>
+
+    <div id="bgm-control" class="hidden">
+      <button id="bgm-toggle" title="BGM 开关">🔊</button>
+      <input type="range" id="bgm-volume" min="0" max="100" value="50" title="音量" />
+    </div>
+
+    <!-- 游戏中返回按钮 -->
+    <button id="game-return-btn" class="hidden" title="返回菜单">✕</button>
+
+    <!-- 退出确认弹窗 -->
+    <div id="confirm-dialog" class="hidden">
+      <div class="confirm-panel">
+        <p>确定要退出游戏吗？</p>
+        <div class="confirm-actions">
+          <button id="confirm-yes-btn" class="action-btn primary">确定退出</button>
+          <button id="confirm-no-btn" class="action-btn secondary">继续游戏</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div>图片与音乐素材版权归 Bandai Namco Entertainment 所有，仅供学习交流</div>
+      <div> </div>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
