@@ -28,6 +28,15 @@ export const TimeStep = 1 / 120;
 export const VelocityIterations = 10;
 export const PositionIterations = 10;
 
+/** 检测是否为微信/QQ 内置浏览器 */
+export const IN_APP_BROWSER = (() => {
+  if (typeof navigator === 'undefined') return null;
+  const ua = navigator.userAgent || '';
+  if (/MicroMessenger/i.test(ua)) return 'wechat' as const;
+  if (/\bQQ\//i.test(ua)) return 'qq' as const;
+  return null;
+})();
+
 export const Fruits = [
   { name: './fruits/amana.png', radius: 56, imgRadius: 200 },
   { name: './fruits/asahi.png', radius: 59, imgRadius: 200 },

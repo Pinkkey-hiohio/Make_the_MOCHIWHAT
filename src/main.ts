@@ -1,5 +1,5 @@
 import pixi from './pixi';
-import { Fruits, GameHeight, Width, IS_MOBILE, GameMode, Presets, getPresetFruits } from './config';
+import { Fruits, GameHeight, Width, IS_MOBILE, IN_APP_BROWSER, GameMode, Presets, getPresetFruits } from './config';
 import app from './app';
 import { init, startGame, stopGame, setGameCallbacks } from './core';
 import './index.css';
@@ -364,4 +364,47 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// BGM 切换函数（各菜单按钮直接调用）
+// ===== 微信/QQ 内置浏览器引导 =====
+if (IN_APP_BROWSER) {
+  const guideOverlay = document.getElementById('browser-guide-overlay')!;
+  const guideCopyBtn = document.getElementById('guide-copy-btn')!;
+  const guideUrl = document.getElementById('guide-url-display')!;
+  const guideCopiedHint = document.getElementById('guide-copied-hint')!;
+  const guideStepIcon1 = document.getElementById('guide-step-icon')!;
+  const guideStepIcon2 = document.getElementById('guide-step-icon2')!;
+
+  guideUrl.textContent = window.location.href;
+  guideOverlay.classList.remove('hidden');
+
+  // 微信：绿色按钮图标
+  if (IN_APP_BROWSER === 'wechat') {
+    guideStepIcon1.textContent = '⋮';
+    guideStepIcon1.style.background = '#07c160';
+    guideStepIcon2.textContent = '🌐';
+  }
+  // QQ：蓝色按钮图标
+  if (IN_APP_BROWSER === 'qq') {
+    guideStepIcon1.textContent = '⋮';
+    guideStepIcon1.style.background = '#12b7f5';
+    guideStepIcon2.textContent = '🌐';
+  }
+
+  // 复制链接按钮
+  guideCopyBtn.addEventListener('click', async (ev) => {
+    ev.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = window.location.href;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    guideCopiedHint.classList.remove('hidden');
+    setTimeout(() => guideCopiedHint.classList.add('hidden'), 2500);
+  });
+}

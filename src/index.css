@@ -536,6 +536,91 @@ canvas {
   padding: 14px 40px;
 }
 
+/* ===== 浏览器引导提示 ===== */
+#browser-guide-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.guide-panel {
+  text-align: center;
+  padding: 48px 56px;
+  border-radius: 32px;
+  background: rgba(30,30,55,.95);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 25px 60px rgba(0,0,0,.5);
+  min-width: 440px;
+}
+.guide-icon {
+  font-size: 56px;
+  margin-bottom: 16px;
+}
+.guide-title {
+  color: #ffeaa7;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  letter-spacing: 2px;
+}
+.guide-desc {
+  color: rgba(255,255,255,.6);
+  font-size: 15px;
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+.guide-steps {
+  text-align: left;
+  margin-bottom: 28px;
+}
+.guide-step {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.guide-step-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  background: rgba(106,161,201,.2);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+.guide-step-text {
+  color: rgba(255,255,255,.75);
+  font-size: 16px;
+}
+.guide-copy-btn {
+  margin-bottom: 12px;
+}
+.guide-url {
+  color: rgba(255,255,255,.25);
+  font-size: 12px;
+  word-break: break-all;
+  margin: 0;
+}
+.guide-copied {
+  color: #6dd98e;
+  font-size: 14px;
+  margin: 10px 0 0;
+  animation: fadeInOut 2s ease;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(6px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* ===== 移动端响应式 ===== */
 body.is-mobile {
   background: #1a1a2e;
@@ -767,6 +852,44 @@ body.is-mobile footer {
 /* 加载界面移动端 */
 body.is-mobile .loading-content {
   width: 260px;
+}
+
+/* 浏览器引导弹窗移动端 */
+body.is-mobile .guide-panel {
+  min-width: unset;
+  width: 88vw;
+  max-width: 380px;
+  padding: 36px 24px 28px;
+  border-radius: 24px;
+}
+body.is-mobile .guide-title {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+body.is-mobile .guide-desc {
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+body.is-mobile .guide-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+body.is-mobile .guide-step-icon {
+  width: 34px;
+  height: 34px;
+  font-size: 18px;
+  line-height: 34px;
+  margin-right: 8px;
+}
+body.is-mobile .guide-step-text {
+  font-size: 14px;
+}
+body.is-mobile .guide-copy-btn {
+  padding: 13px 40px;
+  font-size: 16px;
+}
+body.is-mobile .guide-url {
+  font-size: 10px;
 }
 body.is-mobile .loading-title {
   font-size: 14px;

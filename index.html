@@ -94,6 +94,28 @@
       </div>
     </div>
 
+    <!-- 浏览器引导提示（微信/QQ 内置浏览器） -->
+    <div id="browser-guide-overlay" class="hidden">
+      <div class="guide-panel">
+        <div class="guide-icon">⚠️</div>
+        <h2 class="guide-title">请使用外部浏览器打开</h2>
+        <p class="guide-desc">当前浏览器可能无法完整运行游戏，建议使用系统自带浏览器或 Chrome</p>
+        <div class="guide-steps">
+          <div class="guide-step">
+            <span class="guide-step-icon" id="guide-step-icon">📋</span>
+            <span class="guide-step-text">点击下方按钮复制链接</span>
+          </div>
+          <div class="guide-step">
+            <span class="guide-step-icon" id="guide-step-icon2">🌐</span>
+            <span class="guide-step-text">打开手机自带浏览器，粘贴并访问</span>
+          </div>
+        </div>
+        <button id="guide-copy-btn" class="start-btn guide-copy-btn">📋 复制链接</button>
+        <p class="guide-url" id="guide-url-display"></p>
+        <p class="guide-copied hidden" id="guide-copied-hint">✅ 已复制，请在浏览器中打开</p>
+      </div>
+    </div>
+
     <footer>
       <div>图片与音乐素材版权归 Bandai Namco Entertainment 所有，仅供学习交流</div>
       <div> </div>
