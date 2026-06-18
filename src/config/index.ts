@@ -1,6 +1,12 @@
-export const Height = 1080;
-export const Width = 1080;
+export let Height = 1080;
+export let Width = 1080;
 export const Ratio = 35;
+
+/** 根据设备类型动态设置游戏尺寸 */
+export function setGameDimensions(w: number, h: number): void {
+  Width = w;
+  Height = h;
+}
 export const TimeStep = 1 / 120;
 export const VelocityIterations = 10;
 export const PositionIterations = 10;

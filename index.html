@@ -9,6 +9,17 @@
     <script src="/pixi-6.4.2.min.js"></script>
   </head>
   <body>
+    <!-- 加载进度条 -->
+    <div id="loading-overlay">
+      <div class="loading-content">
+        <div class="loading-title">LOADING FOR MOCHI</div>
+        <div class="loading-track">
+          <div class="loading-bar" id="loading-bar"></div>
+        </div>
+        <div class="loading-text" id="loading-percent">0%</div>
+      </div>
+    </div>
+
     <!-- 开始菜单 -->
     <div id="menu-overlay" class="hidden">
       <div class="menu-bg"></div>

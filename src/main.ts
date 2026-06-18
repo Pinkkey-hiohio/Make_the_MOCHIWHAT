@@ -1,8 +1,22 @@
 import pixi from './pixi';
-import { Fruits, Height, Width, GameMode, Presets, getPresetFruits } from './config';
-import app from './app';
+import { Fruits, Height, Width, GameMode, Presets, getPresetFruits, setGameDimensions } from './config';
+import app, { resizeApp } from './app';
 import { init, startGame, stopGame, setGameCallbacks } from './core';
 import './index.css';
+
+// ===== 设备检测 =====
+const isMobile = ((): boolean => {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  return /Mobi|Android|iPhone|iPad/i.test(ua) || (window.innerWidth < 768);
+})();
+
+if (isMobile) {
+  document.body.classList.add('is-mobile');
+  const { innerWidth: mw, innerHeight: mh } = window;
+  setGameDimensions(mw, mh);
+  resizeApp(mw, mh);
+}
 
 const { Loader } = pixi;
 // 收集所有预设 + 默认水果的图片路径
@@ -17,23 +31,113 @@ const root = document.getElementById('root')!;
 const canvas = app.view;
 root.appendChild(canvas);
 
-const resetSize = () => {
-  const { innerWidth, innerHeight } = window;
-  const scaleX = innerWidth / Width;
-  const scaleY = innerHeight / Height;
-  const scale = Math.min(scaleX, scaleY);
-  canvas.style.width = `${Width}px`;
-  canvas.style.height = `${Height}px`;
-  canvas.style.transform = `scale(${scale})`;
-  root.style.width = `${innerWidth}px`;
-  root.style.height = `${innerHeight}px`;
+// ===== 加载进度条 =====
+const loadingOverlay = document.getElementById('loading-overlay')!;
+const loadingBar = document.getElementById('loading-bar')!;
+const loadingPercent = document.getElementById('loading-percent')!;
+
+// BGM 文件路径列表（用于预加载）
+const menuBgmPath = './music/稲垣敬也 - TOWN (SCmix).mp3';
+const allBgmPaths = [menuBgmPath, ...Presets.map((p) => p.bgm)];
+const totalAssets = images.length + allBgmPaths.length;
+let loadedCount = 0;
+
+const updateProgress = () => {
+  const pct = Math.round((loadedCount / totalAssets) * 100);
+  loadingBar.style.width = `${pct}%`;
+  loadingPercent.textContent = `${pct}%`;
 };
 
-canvas.style.width = `${Width}px`;
-canvas.style.height = `${Height}px`;
+// 预加载单个 BGM：等待 canplaythrough 事件
+const preloadBgm = (src: string): Promise<void> => new Promise((resolve) => {
+  const audio = new Audio();
+  audio.src = src;
+  audio.addEventListener('canplaythrough', () => {
+    loadedCount++;
+    updateProgress();
+    resolve();
+  }, { once: true });
+  audio.addEventListener('error', () => {
+    loadedCount++;
+    updateProgress();
+    resolve(); // 出错也继续，不阻塞加载流程
+  }, { once: true });
+  audio.load();
+});
+
+// PIXI 加载图片，每张完成时更新进度
+Loader.shared.onProgress.add(() => {
+  loadedCount++;
+  updateProgress();
+});
+
+// 资源全部就绪后的回调（保证加载动画至少持续 1000ms）
+const loadingStartTime = Date.now();
+const onAllAssetsReady = () => {
+  init();
+  initBgmElements();
+  activeBgmId = '__menu__';
+
+  const elapsed = Date.now() - loadingStartTime;
+  const remaining = Math.max(0, 1000 - elapsed);
+
+  // 淡出加载界面
+  setTimeout(() => {
+    loadingOverlay.style.opacity = '0';
+    setTimeout(() => {
+      loadingOverlay.classList.add('hidden');
+      menuOverlay.classList.remove('hidden');
+      bgmControl.classList.remove('hidden');
+
+      // 立即播放菜单 BGM（已预加载，无需等待用户点击）
+      if (menuBgm) {
+        menuBgm.play().then(() => {
+          bgmPlaying = true;
+          bgmToggle.textContent = '🔊';
+        }).catch(() => {});
+      }
+    }, 400);
+  }, remaining);
+};
+
+// 开始加载所有资源
+Promise.all([
+  new Promise<void>((resolve) => {
+    Loader.shared.add(images).load(() => resolve());
+  }),
+  ...allBgmPaths.map(preloadBgm),
+]).then(onAllAssetsReady);
+
+const resetSize = () => {
+  const { innerWidth: iw, innerHeight: ih } = window;
+  if (isMobile) {
+    // 移动端：canvas 1:1 贴合屏幕，无缩放
+    canvas.style.width = `${iw}px`;
+    canvas.style.height = `${ih}px`;
+    canvas.style.transform = 'none';
+    root.style.width = `${iw}px`;
+    root.style.height = `${ih}px`;
+  } else {
+    // PC 端：按比例缩放以填满窗口
+    const scale = Math.min(iw / Width, ih / Height);
+    canvas.style.width = `${Width}px`;
+    canvas.style.height = `${Height}px`;
+    canvas.style.transform = `scale(${scale})`;
+    root.style.width = `${iw}px`;
+    root.style.height = `${ih}px`;
+  }
+};
+
+canvas.style.width = isMobile ? `${window.innerWidth}px` : `${Width}px`;
+canvas.style.height = isMobile ? `${window.innerHeight}px` : `${Height}px`;
+canvas.style.transformOrigin = 'center center';
 resetSize();
 
-window.onresize = resetSize;
+window.addEventListener('resize', resetSize);
+window.addEventListener('orientationchange', () => {
+  // 移动端横竖屏切换后重新适配
+  setTimeout(resetSize, 300);
+});
 
 // ===== 菜单与 UI 逻辑 =====
 const menuOverlay = document.getElementById('menu-overlay')!;
@@ -159,6 +263,8 @@ confirmDialog.addEventListener('click', (e) => {
   if (e.target === confirmDialog) confirmDialog.classList.add('hidden');
 });
 
+
+
 setGameCallbacks(
   (score: number) => {
     scoreDisplay.textContent = `得分: ${score}`;
@@ -174,14 +280,6 @@ setGameCallbacks(
 // ===== 菜单 Logo =====
 const logoImg = document.getElementById('logo-img') as HTMLImageElement;
 logoImg.src = './fruits/mano.png';
-
-Loader.shared.add(images).load(() => {
-  init();
-  initBgmElements();
-  activeBgmId = '__menu__';
-  menuOverlay.classList.remove('hidden');
-  bgmControl.classList.remove('hidden');
-});
 
 // ===== BGM 控制 =====
 let bgmElements: Map<string, HTMLAudioElement> = new Map();
@@ -226,12 +324,14 @@ const switchBgm = (bgmId: string) => {
   }
 };
 
-bgmVolume.addEventListener('input', () => {
+bgmVolume.addEventListener('input', (e) => {
+  e.stopPropagation();
   const vol = parseFloat(bgmVolume.value) / 100;
   bgmElements.forEach((audio) => { audio.volume = vol; });
 });
 
-bgmToggle.addEventListener('click', () => {
+bgmToggle.addEventListener('click', (e) => {
+  e.stopPropagation();
   if (bgmPlaying) {
     stopAllBgm();
     bgmToggle.textContent = '🔇';
@@ -243,14 +343,4 @@ bgmToggle.addEventListener('click', () => {
   bgmPlaying = !bgmPlaying;
 });
 
-// 首次交互触发菜单 BGM
-const tryPlayBgm = () => {
-  if (!bgmPlaying && menuBgm) {
-    menuBgm.play().then(() => {
-      bgmPlaying = true;
-      bgmToggle.textContent = '🔊';
-    }).catch(() => {});
-  }
-};
-document.addEventListener('click', tryPlayBgm);
-
+// BGM 切换函数（各菜单按钮直接调用）
