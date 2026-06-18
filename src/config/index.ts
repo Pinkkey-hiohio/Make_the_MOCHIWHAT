@@ -1,12 +1,22 @@
-export let Height = 1080;
-export let Width = 1080;
-export const Ratio = 35;
+export const Height = 1080;
 
-/** 根据设备类型动态设置游戏尺寸 */
-export function setGameDimensions(w: number, h: number): void {
-  Width = w;
-  Height = h;
-}
+/** 检测是否为移动端（触屏 + 窄屏 或 移动端 UA） */
+export const IS_MOBILE = (() => {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const isNarrow = window.innerWidth < 768;
+  const isMobileUA = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  return isTouch && (isNarrow || isMobileUA);
+})();
+
+/** 移动端 9:16 画幅宽度 */
+export const MobileWidth = Math.round(Height * 9 / 16);
+
+/** 实际游戏宽度（PC 端正方形，移动端 9:16 竖屏） */
+export const Width = IS_MOBILE ? MobileWidth : Height;
+
+export const Ratio = 35;
 export const TimeStep = 1 / 120;
 export const VelocityIterations = 10;
 export const PositionIterations = 10;

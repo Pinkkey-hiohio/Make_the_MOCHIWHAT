@@ -1,22 +1,8 @@
 import pixi from './pixi';
-import { Fruits, Height, Width, GameMode, Presets, getPresetFruits, setGameDimensions } from './config';
-import app, { resizeApp } from './app';
+import { Fruits, Height, Width, IS_MOBILE, GameMode, Presets, getPresetFruits } from './config';
+import app from './app';
 import { init, startGame, stopGame, setGameCallbacks } from './core';
 import './index.css';
-
-// ===== 设备检测 =====
-const isMobile = ((): boolean => {
-  if (typeof navigator === 'undefined') return false;
-  const ua = navigator.userAgent || '';
-  return /Mobi|Android|iPhone|iPad/i.test(ua) || (window.innerWidth < 768);
-})();
-
-if (isMobile) {
-  document.body.classList.add('is-mobile');
-  const { innerWidth: mw, innerHeight: mh } = window;
-  setGameDimensions(mw, mh);
-  resizeApp(mw, mh);
-}
 
 const { Loader } = pixi;
 // 收集所有预设 + 默认水果的图片路径
@@ -109,35 +95,47 @@ Promise.all([
 ]).then(onAllAssetsReady);
 
 const resetSize = () => {
-  const { innerWidth: iw, innerHeight: ih } = window;
-  if (isMobile) {
-    // 移动端：canvas 1:1 贴合屏幕，无缩放
-    canvas.style.width = `${iw}px`;
-    canvas.style.height = `${ih}px`;
-    canvas.style.transform = 'none';
-    root.style.width = `${iw}px`;
-    root.style.height = `${ih}px`;
-  } else {
-    // PC 端：按比例缩放以填满窗口
-    const scale = Math.min(iw / Width, ih / Height);
+  const { innerWidth: vw, innerHeight: vh } = window;
+  if (IS_MOBILE) {
+    // 移动端：游戏画幅 9:16，弹性填充屏幕
+    const gameAspect = Width / Height; // 9/16
+    const screenAspect = vw / vh;
+    let scale: number;
+    if (screenAspect > gameAspect) {
+      // 屏幕比游戏宽 → 以高度为准缩放
+      scale = vh / Height;
+    } else {
+      // 屏幕比游戏窄 → 以宽度为准缩放
+      scale = vw / Width;
+    }
     canvas.style.width = `${Width}px`;
     canvas.style.height = `${Height}px`;
     canvas.style.transform = `scale(${scale})`;
-    root.style.width = `${iw}px`;
-    root.style.height = `${ih}px`;
+    root.style.width = `${vw}px`;
+    root.style.height = `${vh}px`;
+  } else {
+    // PC 端：正方形画幅，原有逻辑
+    const scaleX = vw / Width;
+    const scaleY = vh / Height;
+    const scale = Math.min(scaleX, scaleY);
+    canvas.style.width = `${Width}px`;
+    canvas.style.height = `${Height}px`;
+    canvas.style.transform = `scale(${scale})`;
+    root.style.width = `${vw}px`;
+    root.style.height = `${vh}px`;
   }
 };
 
-canvas.style.width = isMobile ? `${window.innerWidth}px` : `${Width}px`;
-canvas.style.height = isMobile ? `${window.innerHeight}px` : `${Height}px`;
-canvas.style.transformOrigin = 'center center';
+canvas.style.width = `${Width}px`;
+canvas.style.height = `${Height}px`;
 resetSize();
 
-window.addEventListener('resize', resetSize);
-window.addEventListener('orientationchange', () => {
-  // 移动端横竖屏切换后重新适配
-  setTimeout(resetSize, 300);
-});
+window.onresize = resetSize;
+
+// 标记移动端以启用响应式 CSS
+if (IS_MOBILE) {
+  document.body.classList.add('is-mobile');
+}
 
 // ===== 菜单与 UI 逻辑 =====
 const menuOverlay = document.getElementById('menu-overlay')!;
