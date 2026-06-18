@@ -3,7 +3,7 @@ import pixi from '../pixi';
 import b2 from '../box2d';
 import app from '../app';
 import {
-  Ratio, PositionIterations, VelocityIterations, TimeStep, Height, Width,
+  Ratio, PositionIterations, VelocityIterations, TimeStep, GameHeight, Width,
   GameMode,
   getPresetFruits, getScoreValues,
   FruitConfig,
@@ -39,8 +39,8 @@ const createWall = () => {
   wallFixtureDef.filter.groupIndex = -20;
   wallFixtureDef.shape = new b2.ChainShape().CreateLoop([
     { x: 0, y: 0 / Ratio },
-    { x: 0, y: Height / Ratio },
-    { x: Width / Ratio, y: Height / Ratio },
+    { x: 0, y: GameHeight / Ratio },
+    { x: Width / Ratio, y: GameHeight / Ratio },
     { x: Width / Ratio, y: 0 / Ratio },
   ]);
   const wallBody = world.CreateBody(wallBodyDef);

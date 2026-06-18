@@ -1,5 +1,5 @@
 import pixi from './pixi';
-import { Fruits, Height, Width, IS_MOBILE, GameMode, Presets, getPresetFruits } from './config';
+import { Fruits, GameHeight, Width, IS_MOBILE, GameMode, Presets, getPresetFruits } from './config';
 import app from './app';
 import { init, startGame, stopGame, setGameCallbacks } from './core';
 import './index.css';
@@ -98,28 +98,28 @@ const resetSize = () => {
   const { innerWidth: vw, innerHeight: vh } = window;
   if (IS_MOBILE) {
     // 移动端：游戏画幅 9:16，弹性填充屏幕
-    const gameAspect = Width / Height; // 9/16
+    const gameAspect = Width / GameHeight;
     const screenAspect = vw / vh;
     let scale: number;
     if (screenAspect > gameAspect) {
       // 屏幕比游戏宽 → 以高度为准缩放
-      scale = vh / Height;
+      scale = vh / GameHeight;
     } else {
       // 屏幕比游戏窄 → 以宽度为准缩放
       scale = vw / Width;
     }
     canvas.style.width = `${Width}px`;
-    canvas.style.height = `${Height}px`;
+    canvas.style.height = `${GameHeight}px`;
     canvas.style.transform = `scale(${scale})`;
     root.style.width = `${vw}px`;
     root.style.height = `${vh}px`;
   } else {
     // PC 端：正方形画幅，原有逻辑
     const scaleX = vw / Width;
-    const scaleY = vh / Height;
+    const scaleY = vh / GameHeight;
     const scale = Math.min(scaleX, scaleY);
     canvas.style.width = `${Width}px`;
-    canvas.style.height = `${Height}px`;
+    canvas.style.height = `${GameHeight}px`;
     canvas.style.transform = `scale(${scale})`;
     root.style.width = `${vw}px`;
     root.style.height = `${vh}px`;
@@ -127,7 +127,7 @@ const resetSize = () => {
 };
 
 canvas.style.width = `${Width}px`;
-canvas.style.height = `${Height}px`;
+canvas.style.height = `${GameHeight}px`;
 resetSize();
 
 window.onresize = resetSize;

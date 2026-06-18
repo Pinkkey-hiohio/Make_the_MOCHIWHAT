@@ -1,9 +1,9 @@
 import pixi from './pixi';
-import { Height, Width } from './config';
+import { GameHeight, Width } from './config';
 
 export default new pixi.Application({
   width: Width,
-  height: Height,
+  height: GameHeight,
   antialias: true,
   backgroundColor: 0xffe89d,
 });

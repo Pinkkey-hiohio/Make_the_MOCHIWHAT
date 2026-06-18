@@ -10,11 +10,18 @@ export const IS_MOBILE = (() => {
   return isTouch && (isNarrow || isMobileUA);
 })();
 
-/** 移动端 9:16 画幅宽度 */
-export const MobileWidth = Math.round(Height * 9 / 16);
+/** 移动端有效高度（补偿浏览器任务栏遮挡，缩小 6%） */
+export const MobileHeight = Math.round(Height * 0.94);
 
-/** 实际游戏宽度（PC 端正方形，移动端 9:16 竖屏） */
+/** 移动端 9:16 画幅宽度 */
+export const MobileWidth = Math.round(MobileHeight * 9 / 16);
+
+/** 实际游戏尺寸（PC 端正方形，移动端 9:16 竖屏） */
 export const Width = IS_MOBILE ? MobileWidth : Height;
+export const GameHeight = IS_MOBILE ? MobileHeight : Height;
+
+/** 移动端水果大小缩放（缩小 10%） */
+export const MOBILE_FRUIT_SCALE = IS_MOBILE ? 0.9 : 1;
 
 export const Ratio = 35;
 export const TimeStep = 1 / 120;
@@ -167,13 +174,19 @@ export const Presets: Preset[] = [
   },
 ];
 
-/** 根据预设 ID 获取水果列表 */
+/** 根据预设 ID 获取水果列表（移动端自动缩小 10%） */
 export function getPresetFruits(presetId?: string): FruitConfig[] {
+  let list: FruitConfig[];
   if (presetId) {
     const preset = Presets.find((p) => p.id === presetId);
-    if (preset && preset.fruits.length > 0) return preset.fruits;
+    list = (preset && preset.fruits.length > 0) ? preset.fruits : DefaultFruits;
+  } else {
+    list = DefaultFruits;
   }
-  return DefaultFruits;
+  if (MOBILE_FRUIT_SCALE !== 1) {
+    return list.map((f) => ({ ...f, radius: Math.round(f.radius * MOBILE_FRUIT_SCALE) }));
+  }
+  return list;
 }
 
 /** 合成第 n 级水果得 (n+1)² × 10 分 */
