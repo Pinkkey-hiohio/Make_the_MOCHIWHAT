@@ -235,8 +235,15 @@ document.getElementById('back-menu-btn')!.addEventListener('click', () => {
 const gameReturnBtn = document.getElementById('game-return-btn')!;
 const confirmDialog = document.getElementById('confirm-dialog')!;
 
-const showReturnBtn = () => { gameReturnBtn.classList.remove('hidden'); };
-const hideReturnBtn = () => { gameReturnBtn.classList.add('hidden'); };
+const showReturnBtn = () => {
+  gameReturnBtn.classList.remove('hidden');
+  if (IS_MOBILE) document.body.classList.add('is-in-game');
+};
+const hideReturnBtn = () => {
+  gameReturnBtn.classList.add('hidden');
+  bgmPopup.classList.remove('show');
+  if (IS_MOBILE) document.body.classList.remove('is-in-game');
+};
 
 gameReturnBtn.addEventListener('click', () => {
   confirmDialog.classList.remove('hidden');
@@ -322,6 +329,8 @@ const switchBgm = (bgmId: string) => {
   }
 };
 
+const bgmPopup = document.getElementById('bgm-popup')!;
+
 bgmVolume.addEventListener('input', (e) => {
   e.stopPropagation();
   const vol = parseFloat(bgmVolume.value) / 100;
@@ -339,6 +348,20 @@ bgmToggle.addEventListener('click', (e) => {
     bgmToggle.textContent = '🔊';
   }
   bgmPlaying = !bgmPlaying;
+
+  // 移动端游戏时：切换音量弹出面板
+  if (IS_MOBILE && gameReturnBtn && !gameReturnBtn.classList.contains('hidden')) {
+    bgmPopup.classList.toggle('show');
+  }
+});
+
+// 移动端：点击弹出面板外部关闭
+document.addEventListener('click', (e) => {
+  if (!IS_MOBILE) return;
+  const target = e.target as HTMLElement;
+  if (!bgmPopup.contains(target) && target !== bgmToggle) {
+    bgmPopup.classList.remove('show');
+  }
 });
 
 // BGM 切换函数（各菜单按钮直接调用）

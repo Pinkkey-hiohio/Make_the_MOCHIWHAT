@@ -539,7 +539,6 @@ canvas {
 /* ===== 移动端响应式 ===== */
 body.is-mobile {
   background: #1a1a2e;
-  /* 背景弹性填充：canvas 9:16 居中，其余区域显示深色背景 */
 }
 body.is-mobile #root {
   position: fixed;
@@ -547,84 +546,96 @@ body.is-mobile #root {
   z-index: 0;
 }
 
-/* 主菜单面板缩小 */
+/* 主菜单面板 — 大幅缩小适配手机 */
 body.is-mobile .menu-panel {
   min-width: unset;
   width: 88vw;
-  max-width: 400px;
-  padding: 40px 24px 32px;
-  border-radius: 24px;
+  max-width: 360px;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 24px 20px 20px;
+  border-radius: 20px;
 }
 body.is-mobile .menu-logo {
-  margin-top: -10px;
-  margin-bottom: 8px;
+  margin-top: -4px;
+  margin-bottom: 4px;
+}
+body.is-mobile .logo-icon {
+  width: 52px;
+  margin: 0 auto 6px;
 }
 body.is-mobile .menu-title-img {
-  max-width: 260px;
+  max-width: 200px;
+  margin-bottom: 6px;
 }
 body.is-mobile .menu-subtitle {
-  font-size: 14px;
-  margin-bottom: 24px;
+  font-size: 13px;
+  margin-bottom: 14px;
 }
 body.is-mobile .mode-select {
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 28px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 body.is-mobile .mode-btn {
   flex-direction: row;
-  gap: 14px;
-  padding: 14px 18px;
+  gap: 10px;
+  padding: 10px 14px;
   min-width: unset;
+  border-radius: 14px;
 }
 body.is-mobile .mode-icon-img {
-  width: 52px;
-  height: 52px;
+  width: 42px;
+  height: 42px;
 }
 body.is-mobile .mode-label {
-  font-size: 17px;
+  font-size: 15px;
 }
 body.is-mobile .mode-desc {
-  font-size: 12px;
+  font-size: 11px;
 }
 body.is-mobile .start-btn {
-  padding: 16px 60px;
-  font-size: 20px;
+  padding: 13px 50px;
+  font-size: 18px;
+  letter-spacing: 2px;
 }
 body.is-mobile .copyright-note {
-  font-size: 10px;
-  margin-top: 16px;
+  font-size: 9px;
+  margin-top: 12px;
 }
 
 /* 预设选择面板 */
 body.is-mobile .preset-title {
-  font-size: 20px;
-  margin-bottom: 20px;
+  font-size: 17px;
+  margin-bottom: 14px;
 }
 body.is-mobile .preset-list {
-  gap: 10px;
-  margin-bottom: 24px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 body.is-mobile .preset-item {
-  width: 42vw;
-  max-width: 150px;
-  padding: 14px 10px;
-  gap: 6px;
+  width: 40vw;
+  max-width: 130px;
+  padding: 10px 8px;
+  gap: 4px;
+  border-radius: 14px;
 }
 body.is-mobile .preset-item-logo {
-  width: 70px;
-  height: 70px;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
 }
 body.is-mobile .preset-item-name {
-  font-size: 12px;
+  font-size: 11px;
 }
 body.is-mobile .preset-actions {
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 body.is-mobile .preset-actions .action-btn {
-  padding: 12px 0;
+  padding: 10px 0;
   width: 100%;
+  font-size: 15px;
 }
 
 /* 得分 */
@@ -646,11 +657,11 @@ body.is-mobile #game-return-btn {
   font-size: 18px;
 }
 
-/* BGM 控制 */
+/* BGM 控制 — 移动端默认（菜单页）：右上角，完整显示 */
 body.is-mobile #bgm-control {
-  top: auto;
-  bottom: 12px;
+  top: 12px;
   right: 12px;
+  bottom: auto;
   padding: 6px 12px;
   gap: 6px;
 }
@@ -658,9 +669,55 @@ body.is-mobile #bgm-toggle {
   width: 34px;
   height: 34px;
   font-size: 16px;
+  background: rgba(255,255,255,.1);
 }
 body.is-mobile #bgm-volume {
   width: 80px;
+}
+/* 菜单页弹出面板不隐藏 */
+body.is-mobile #bgm-popup {
+  display: block;
+}
+
+/* BGM 控制 — 游戏中：仅图标在返回按钮左侧，弹出式面板 */
+body.is-mobile.is-in-game #bgm-control {
+  top: 12px;
+  right: 62px;
+  bottom: auto;
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  gap: 0;
+}
+body.is-mobile.is-in-game #bgm-toggle {
+  width: 38px;
+  height: 38px;
+  font-size: 18px;
+  background: rgba(0,0,0,.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.15);
+}
+body.is-mobile.is-in-game #bgm-popup {
+  display: none;
+  position: fixed;
+  top: 56px;
+  right: 12px;
+  z-index: 500;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.12);
+}
+body.is-mobile.is-in-game #bgm-popup.show {
+  display: flex;
+}
+body.is-mobile.is-in-game #bgm-volume {
+  width: 100px;
 }
 
 /* 游戏结束面板 */
@@ -671,15 +728,16 @@ body.is-mobile .game-over-panel {
   padding: 40px 32px;
 }
 body.is-mobile .game-over-panel h2 {
-  font-size: 30px;
+  font-size: 28px;
+  margin-bottom: 12px;
 }
 body.is-mobile #final-score {
-  font-size: 22px;
-  margin-bottom: 28px;
+  font-size: 20px;
+  margin-bottom: 24px;
 }
 body.is-mobile .action-btn {
-  font-size: 17px;
-  padding: 14px 0;
+  font-size: 16px;
+  padding: 12px 0;
 }
 
 /* 确认弹窗 */
