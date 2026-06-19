@@ -96,34 +96,29 @@ Promise.all([
 
 const resetSize = () => {
   const { innerWidth: vw, innerHeight: vh } = window;
-  if (IS_MOBILE) {
-    // 移动端：游戏画幅 9:16，弹性填充屏幕
-    const gameAspect = Width / GameHeight;
-    const screenAspect = vw / vh;
-    let scale: number;
-    if (screenAspect > gameAspect) {
-      // 屏幕比游戏宽 → 以高度为准缩放
-      scale = vh / GameHeight;
-    } else {
-      // 屏幕比游戏窄 → 以宽度为准缩放
-      scale = vw / Width;
-    }
-    canvas.style.width = `${Width}px`;
-    canvas.style.height = `${GameHeight}px`;
-    canvas.style.transform = `scale(${scale})`;
-    root.style.width = `${vw}px`;
-    root.style.height = `${vh}px`;
+
+  // PC 端：动态 rem 根字体（以 1280×720 为基准 → 约 85% 屏占比）
+  if (!IS_MOBILE) {
+    document.documentElement.style.fontSize =
+      `${Math.min(vw / 1280, vh / 720) * 16}px`;
   } else {
-    // PC 端：正方形画幅，原有逻辑
-    const scaleX = vw / Width;
-    const scaleY = vh / GameHeight;
-    const scale = Math.min(scaleX, scaleY);
-    canvas.style.width = `${Width}px`;
-    canvas.style.height = `${GameHeight}px`;
-    canvas.style.transform = `scale(${scale})`;
-    root.style.width = `${vw}px`;
-    root.style.height = `${vh}px`;
+    document.documentElement.style.fontSize = '';
   }
+
+  // 统一弹性填充方案：画布等比缩放撑满视口
+  const gameAspect = Width / GameHeight;
+  const screenAspect = vw / vh;
+  let scale: number;
+  if (screenAspect > gameAspect) {
+    scale = vh / GameHeight;
+  } else {
+    scale = vw / Width;
+  }
+  canvas.style.width = `${Width}px`;
+  canvas.style.height = `${GameHeight}px`;
+  canvas.style.transform = `scale(${scale})`;
+  root.style.width = `${vw}px`;
+  root.style.height = `${vh}px`;
 };
 
 canvas.style.width = `${Width}px`;
