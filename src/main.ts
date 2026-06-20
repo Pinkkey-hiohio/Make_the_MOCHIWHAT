@@ -279,7 +279,7 @@ setGameCallbacks(
 
 // ===== 菜单 Logo =====
 const logoImg = document.getElementById('logo-img') as HTMLImageElement;
-logoImg.src = './fruits/mano.png';
+logoImg.src = './fruits/mano.webp';
 
 // ===== BGM 控制 =====
 let bgmElements: Map<string, HTMLAudioElement> = new Map();
