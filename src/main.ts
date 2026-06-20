@@ -22,47 +22,41 @@ const loadingOverlay = document.getElementById('loading-overlay')!;
 const loadingBar = document.getElementById('loading-bar')!;
 const loadingPercent = document.getElementById('loading-percent')!;
 
-// BGM 文件路径列表（用于预加载）
+// BGM 文件路径列表（后台预加载，不阻塞 loading 页）
 const menuBgmPath = './music/稲垣敬也 - TOWN (SCmix).mp3';
 const allBgmPaths = [menuBgmPath, ...Presets.map((p) => p.bgm)];
-const totalAssets = images.length + allBgmPaths.length;
-let loadedCount = 0;
+
+const totalImages = images.length;
+let imagesLoaded = 0;
 
 const updateProgress = () => {
-  const pct = Math.round((loadedCount / totalAssets) * 100);
+  const pct = Math.round((imagesLoaded / totalImages) * 100);
   loadingBar.style.width = `${pct}%`;
   loadingPercent.textContent = `${pct}%`;
 };
 
-// 预加载单个 BGM（超时 + canplaythrough + suspect 兜底）
-const BGM_LOAD_TIMEOUT = 8000;
-const preloadBgm = (src: string): Promise<void> => new Promise((resolve) => {
-  const audio = new Audio();
-  let done = false;
-  const finish = () => {
-    if (done) return;
-    done = true;
-    loadedCount++;
-    updateProgress();
-    resolve();
-  };
-  audio.src = src;
-  audio.addEventListener('canplaythrough', finish, { once: true });
-  audio.addEventListener('suspend', finish, { once: true });
-  audio.addEventListener('error', finish, { once: true });
-  setTimeout(finish, BGM_LOAD_TIMEOUT);
-  audio.load();
-});
-
 // PIXI 加载图片，每张完成时更新进度
 Loader.shared.onProgress.add(() => {
-  loadedCount++;
+  imagesLoaded++;
   updateProgress();
 });
 
-// 资源全部就绪后的回调（保证加载动画至少持续 1000ms）
+// 后台预热 BGM（仅触发浏览器缓存，不阻塞不跟踪进度）
+const preloadBgmBg = (src: string): void => {
+  const audio = new Audio();
+  audio.src = src;
+  audio.preload = 'auto';
+  audio.load();
+  // 8s 后释放引用
+  setTimeout(() => { audio.src = ''; }, 8000);
+};
+
+// 图片加载完成后即可进入游戏（BGM 后台继续加载）
 const loadingStartTime = Date.now();
-const onAllAssetsReady = () => {
+const onImagesReady = () => {
+  // 启动后台 BGM 预热
+  allBgmPaths.forEach(preloadBgmBg);
+
   init();
   initBgmElements();
   activeBgmId = '__menu__';
@@ -78,7 +72,7 @@ const onAllAssetsReady = () => {
       menuOverlay.classList.remove('hidden');
       bgmControl.classList.remove('hidden');
 
-      // 立即播放菜单 BGM（已预加载，无需等待用户点击）
+      // 立即播放菜单 BGM
       if (menuBgm) {
         menuBgm.play().then(() => {
           bgmPlaying = true;
@@ -89,19 +83,12 @@ const onAllAssetsReady = () => {
   }, remaining);
 };
 
-// 开始加载所有资源（整体超时兜底：最长 15 秒）
-const ALL_LOAD_TIMEOUT = 15000;
-Promise.race([
-  Promise.all([
-    new Promise<void>((resolve) => {
-      Loader.shared.add(images).load(() => resolve());
-    }),
-    ...allBgmPaths.map(preloadBgm),
-  ]),
-  new Promise<void>((resolve) => {
-    setTimeout(resolve, ALL_LOAD_TIMEOUT);
-  }),
-]).then(onAllAssetsReady);
+// 只等图片：图片必须全部加载完毕才能关闭 loading
+Loader.shared.add(images).load(() => {
+  imagesLoaded = totalImages;
+  updateProgress();
+  onImagesReady();
+});
 
 const resetSize = () => {
   const { innerWidth: vw, innerHeight: vh } = window;
