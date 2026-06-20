@@ -628,6 +628,69 @@ canvas {
   100% { opacity: 0; }
 }
 
+/* ===== 合成表（PC 端游戏侧边栏） ===== */
+#fusion-chart {
+  position: fixed;
+  z-index: 110;
+  width: 7rem;
+  max-width: 112px;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.75rem 0.5rem;
+  border-radius: 0.75rem;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+.fusion-title {
+  color: #ffeaa7;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 0.15rem;
+}
+.fusion-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+.fusion-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.fusion-item img {
+  width: 3.5rem;
+  max-width: 56px;
+  height: 3.5rem;
+  max-height: 56px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  background: rgba(255,255,255,.06);
+  padding: 3px;
+}
+.fusion-arrow {
+  color: rgba(255,255,255,.35);
+  font-size: 0.7rem;
+  line-height: 1;
+}
+.fusion-label {
+  font-size: 0.55rem;
+  color: rgba(255,255,255,.4);
+  text-align: center;
+  max-width: 5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ===== 移动端响应式 ===== */
 body.is-mobile {
   background: #1a1a2e;

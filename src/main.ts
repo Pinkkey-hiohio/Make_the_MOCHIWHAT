@@ -165,6 +165,7 @@ document.getElementById('start-btn')!.addEventListener('click', () => {
     gameOverOverlay.classList.add('hidden');
     showReturnBtn();
     switchBgm('283');
+    showFusionChart(undefined);
     startGame(selectedMode);
   }
 });
@@ -198,6 +199,7 @@ document.getElementById('preset-start-btn')!.addEventListener('click', () => {
   scoreDisplay.classList.remove('hidden');
   gameOverOverlay.classList.add('hidden');
   showReturnBtn();
+  showFusionChart(selectedPresetId);
   startGame(GameMode.Normal, selectedPresetId);
 });
 document.getElementById('back-main-btn')!.addEventListener('click', () => {
@@ -210,12 +212,14 @@ document.getElementById('restart-btn')!.addEventListener('click', () => {
   gameOverOverlay.classList.add('hidden');
   scoreDisplay.classList.remove('hidden');
   showReturnBtn();
+  showFusionChart(selectedPresetId);
   startGame(selectedMode, selectedPresetId);
 });
 
 document.getElementById('back-menu-btn')!.addEventListener('click', () => {
   stopGame();
   hideReturnBtn();
+  hideFusionChart();
   gameOverOverlay.classList.add('hidden');
   scoreDisplay.classList.add('hidden');
   menuOverlay.classList.remove('hidden');
@@ -225,6 +229,48 @@ document.getElementById('back-menu-btn')!.addEventListener('click', () => {
 // ===== 游戏中返回按钮 + 退出确认 =====
 const gameReturnBtn = document.getElementById('game-return-btn')!;
 const confirmDialog = document.getElementById('confirm-dialog')!;
+
+// ===== 合成表 =====
+const fusionChart = document.getElementById('fusion-chart')!;
+const fusionList = document.getElementById('fusion-list')!;
+
+// 摘出图片名作为标签
+const fruitLabel = (path: string): string => {
+  const name = path.split('/').pop()!.replace(/\.(webp|png)$/, '');
+  return name.replace(/^chibi_/, '').replace('2', '²').replace('_', ' ');
+};
+
+const showFusionChart = (presetId?: string) => {
+  if (IS_MOBILE) return;
+  const fruits = getPresetFruits(presetId);
+  let html = '';
+  fruits.forEach((f, i) => {
+    const label = fruitLabel(f.name);
+    html += `<div class="fusion-item"><img src="${f.name}" alt="${label}"/></div>`;
+    if (i < fruits.length - 1) {
+      html += '<div class="fusion-arrow">↓</div>';
+    }
+  });
+  fusionList.innerHTML = html;
+  fusionChart.classList.remove('hidden');
+  positionFusionChart();
+  window.addEventListener('resize', positionFusionChart);
+};
+
+const positionFusionChart = () => {
+  if (fusionChart.classList.contains('hidden')) return;
+  const canvasRect = canvas.getBoundingClientRect();
+  const gap = 8;
+  const margin = 16;
+  fusionChart.style.left = `${canvasRect.right + gap}px`;
+  fusionChart.style.top = `${canvasRect.top + margin}px`;
+  fusionChart.style.maxHeight = `${canvasRect.height - margin * 2}px`;
+};
+
+const hideFusionChart = () => {
+  fusionChart.classList.add('hidden');
+  window.removeEventListener('resize', positionFusionChart);
+};
 
 const showReturnBtn = () => {
   gameReturnBtn.classList.remove('hidden');
@@ -243,6 +289,7 @@ gameReturnBtn.addEventListener('click', () => {
 document.getElementById('confirm-yes-btn')!.addEventListener('click', () => {
   confirmDialog.classList.add('hidden');
   hideReturnBtn();
+  hideFusionChart();
   stopGame();
   scoreDisplay.classList.add('hidden');
   gameOverOverlay.classList.add('hidden');
@@ -268,6 +315,7 @@ setGameCallbacks(
   (score: number, _mode: GameMode) => {
     scoreDisplay.classList.add('hidden');
     hideReturnBtn();
+    hideFusionChart();
     finalScoreEl.textContent = `最终得分: ${score}`;
     gameOverOverlay.classList.remove('hidden');
   },
