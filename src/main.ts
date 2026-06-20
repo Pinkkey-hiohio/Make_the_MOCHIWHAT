@@ -34,20 +34,23 @@ const updateProgress = () => {
   loadingPercent.textContent = `${pct}%`;
 };
 
-// 预加载单个 BGM：等待 canplaythrough 事件
+// 预加载单个 BGM（超时 + canplaythrough + suspect 兜底）
+const BGM_LOAD_TIMEOUT = 8000;
 const preloadBgm = (src: string): Promise<void> => new Promise((resolve) => {
   const audio = new Audio();
-  audio.src = src;
-  audio.addEventListener('canplaythrough', () => {
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
     loadedCount++;
     updateProgress();
     resolve();
-  }, { once: true });
-  audio.addEventListener('error', () => {
-    loadedCount++;
-    updateProgress();
-    resolve(); // 出错也继续，不阻塞加载流程
-  }, { once: true });
+  };
+  audio.src = src;
+  audio.addEventListener('canplaythrough', finish, { once: true });
+  audio.addEventListener('suspend', finish, { once: true });
+  audio.addEventListener('error', finish, { once: true });
+  setTimeout(finish, BGM_LOAD_TIMEOUT);
   audio.load();
 });
 
@@ -86,12 +89,18 @@ const onAllAssetsReady = () => {
   }, remaining);
 };
 
-// 开始加载所有资源
-Promise.all([
+// 开始加载所有资源（整体超时兜底：最长 15 秒）
+const ALL_LOAD_TIMEOUT = 15000;
+Promise.race([
+  Promise.all([
+    new Promise<void>((resolve) => {
+      Loader.shared.add(images).load(() => resolve());
+    }),
+    ...allBgmPaths.map(preloadBgm),
+  ]),
   new Promise<void>((resolve) => {
-    Loader.shared.add(images).load(() => resolve());
+    setTimeout(resolve, ALL_LOAD_TIMEOUT);
   }),
-  ...allBgmPaths.map(preloadBgm),
 ]).then(onAllAssetsReady);
 
 const resetSize = () => {

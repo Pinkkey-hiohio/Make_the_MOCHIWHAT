@@ -33,7 +33,7 @@ export const IN_APP_BROWSER = (() => {
   if (typeof navigator === 'undefined') return null;
   const ua = navigator.userAgent || '';
   if (/MicroMessenger/i.test(ua)) return 'wechat' as const;
-  if (/\bQQ\//i.test(ua)) return 'qq' as const;
+  if (/MQQBrowser/i.test(ua) || /\bQQ\//i.test(ua) || /QQ[\s/]?[\d.]+/i.test(ua)) return 'qq' as const;
   return null;
 })();
 
