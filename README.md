@@ -12,7 +12,8 @@ Please contact us to remove any copyrighted material.
 
 ## 简介
 
-本项目核心为https://github.com/HullQin/make-watermelon.git，经个人魔改而成。
+本项目核心为https://github.com/HullQin/make-watermelon.git 
+个人魔改而成。
 核心玩法和合成大西瓜一致。
 
 ## 警告WARNING
