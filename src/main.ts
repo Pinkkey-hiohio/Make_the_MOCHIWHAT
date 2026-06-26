@@ -23,7 +23,7 @@ const loadingBar = document.getElementById('loading-bar')!;
 const loadingPercent = document.getElementById('loading-percent')!;
 
 // BGM 文件路径列表（后台预加载，不阻塞 loading 页）
-const menuBgmPath = './music/稲垣敬也 - TOWN (SCmix).mp3';
+const menuBgmPath = './music/Town （シャニソンversion） - シャイニーカラーズ.mp3';
 const allBgmPaths = [menuBgmPath, ...Presets.map((p) => p.bgm)];
 
 const totalImages = images.length;
@@ -330,7 +330,7 @@ const bgmVolume = document.getElementById('bgm-volume') as HTMLInputElement;
 // 创建所有 BGM
 const initBgmElements = () => {
   // 菜单 BGM
-  menuBgm = new Audio('./music/稲垣敬也 - TOWN (SCmix).mp3');
+  menuBgm = new Audio('./music/Town （シャニソンversion） - シャイニーカラーズ.mp3');
   menuBgm.loop = true;
   menuBgm.volume = parseFloat(bgmVolume.value) / 100;
   bgmElements.set('__menu__', menuBgm);
