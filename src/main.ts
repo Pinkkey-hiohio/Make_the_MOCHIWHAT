@@ -71,14 +71,6 @@ const onImagesReady = () => {
       loadingOverlay.classList.add('hidden');
       menuOverlay.classList.remove('hidden');
       bgmControl.classList.remove('hidden');
-
-      // 立即播放菜单 BGM
-      if (menuBgm) {
-        menuBgm.play().then(() => {
-          bgmPlaying = true;
-          bgmToggle.textContent = '🔊';
-        }).catch(() => {});
-      }
     }, 400);
   }, remaining);
 };
@@ -400,6 +392,18 @@ document.addEventListener('click', (e) => {
   const target = e.target as HTMLElement;
   if (!bgmPopup.contains(target) && target !== bgmToggle) {
     bgmPopup.classList.remove('show');
+  }
+});
+
+// 首次用户交互后启动 BGM（满足浏览器自动播放策略）
+document.addEventListener('click', () => {
+  if (bgmPlaying || !activeBgmId) return;
+  const bgm = bgmElements.get(activeBgmId);
+  if (bgm) {
+    bgm.play().then(() => {
+      bgmPlaying = true;
+      bgmToggle.textContent = '🔊';
+    }).catch(() => {});
   }
 });
 

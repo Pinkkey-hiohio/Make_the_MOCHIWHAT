@@ -1,4 +1,4 @@
-export const Height = 1080;
+﻿export const Height = 1080;
 
 /** 检测是否为移动端（触屏 + 窄屏 或 移动端 UA） */
 export const IS_MOBILE = (() => {
@@ -172,6 +172,62 @@ export const Presets: Preset[] = [
       { name: './fruits/rinze.webp',   radius: 138, imgRadius: 183 },
       { name: './fruits/juri.webp',    radius: 154, imgRadius: 183 },
       { name: './fruits/natsuha.webp', radius: 171, imgRadius: 183 },
+    ],
+  },
+  {
+    id: 'straylight',
+    name: 'Straylight',
+    logo: './logo/straylight.webp',
+    bgm: './music/LIVE LIVE LIVE! (Off Vocal) - ストレイライト.mp3',
+    fruits: [
+      { name: './fruits/chibi_gurumi/chibi_asahi.webp',   radius: 45, imgRadius: 150 },
+      { name: './fruits/chibi_gurumi/chibi_fuyuko.webp',   radius: 50, imgRadius: 150 },
+      { name: './fruits/chibi_gurumi/chibi_mei.webp',      radius: 55, imgRadius: 150 },
+      { name: './fruits/asahi.webp',  radius: 116, imgRadius: 183 },
+      { name: './fruits/fuyuko.webp', radius: 143, imgRadius: 183 },
+      { name: './fruits/mei.webp',    radius: 171, imgRadius: 183 },
+    ],
+  },
+  {
+    id: 'noctchill',
+    name: 'Noctchill',
+    logo: './logo/noctchill.webp',
+    bgm: './music/いつかのキミへ (Off Vocal) - ノクチル.mp3',
+    fruits: [
+      { name: './fruits/chibi_gurumi/toru.webp',    radius: 43, imgRadius: 150 },
+      { name: './fruits/chibi_gurumi/hinana.webp',   radius: 49, imgRadius: 150 },
+      { name: './fruits/chibi_gurumi/madoka.webp',   radius: 55, imgRadius: 150 },
+      { name: './fruits/chibi_gurumi/koito.webp',    radius: 61, imgRadius: 150 },
+      { name: './fruits/toru.webp',    radius: 116, imgRadius: 183 },
+      { name: './fruits/hinana.webp',  radius: 133, imgRadius: 183 },
+      { name: './fruits/madoka.webp',  radius: 150, imgRadius: 183 },
+      { name: './fruits/koito.webp',   radius: 171, imgRadius: 183 },
+    ],
+  },
+  {
+    id: 'shhis',
+    name: 'SHHis',
+    logo: './logo/logo_shhis.webp',
+    bgm: './music/Monochromatic (Off Vocal) - シーズ.mp3',
+    fruits: [
+      { name: './fruits/chibi_gurumi/nichika.webp', radius: 48, imgRadius: 150 },
+      { name: './fruits/chibi_gurumi/mikoto.webp',  radius: 55, imgRadius: 150 },
+      { name: './fruits/nichika.webp', radius: 116, imgRadius: 183 },
+      { name: './fruits/mikoto.webp',  radius: 171, imgRadius: 183 },
+    ],
+  },
+  {
+    id: 'cometik',
+    name: 'CoMETIK',
+    logo: './logo/cometik.webp',
+    bgm: './music/泥濘鳴鳴 (Off Vocal) - コメティック.mp3',
+    fruits: [
+      { name: './fruits/chibi_gurumi/chibi_hana.webp',   radius: 45, imgRadius: 150 },
+      { name: './fruits/chibi_gurumi/chibi_haruki.webp',  radius: 50, imgRadius: 150 },
+      { name: './fruits/chibi_gurumi/chibi_luka.webp',    radius: 55, imgRadius: 150 },
+      { name: './fruits/hana.webp',   radius: 116, imgRadius: 183 },
+      { name: './fruits/haruki.webp', radius: 143, imgRadius: 183 },
+      { name: './fruits/luka.webp',   radius: 171, imgRadius: 183 },
     ],
   },
   {
